@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-7">
+        <span class="badge bg-light text-primary fw-semibold mb-3 px-3 py-2" style="border-radius:999px;font-size:.82rem">
+          🎓 Student Community Platform
+        </span>
+        <h1>Welcome to <span class="hero-highlight">EduVerse</span></h1>
+        <p class="lead mt-3">Share notes, save lives through blood donation, and reconnect with lost items — all in one modern campus platform.</p>
+        <div class="mt-4 d-flex gap-3 flex-wrap">
+          {% if current_user %}
+            <a href="{{ url_for('dashboard') }}" class="btn btn-light btn-lg">
+              Go to Dashboard <i class="bi bi-arrow-right"></i>
+            </a>
+          {% else %}
+            <a href="{{ url_for('register') }}" class="btn btn-light btn-lg">
+              Get Started <i class="bi bi-arrow-right"></i>
+            </a>
+            <a href="{{ url_for('login') }}" class="btn btn-outline-light btn-lg">Login</a>
+          {% endif %}
+        </div>
+      </div>
+      <div class="col-lg-5 text-center d-none d-lg-flex justify-content-center align-items-center">
+        <i class="bi bi-mortarboard-fill hero-icon-bg"></i>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats strip -->
+{% if current_user %}
+<section class="container my-5">
+  <div class="row g-3 text-center">
+    <div class="col-4">
+      <div class="card py-3 card-hover">
+        <div class="fw-800 fs-4 text-royal">📚</div>
+        <div class="small text-muted mt-1">Share Notes</div>
+      </div>
+    </div>
+    <div class="col-4">
+      <div class="card py-3 card-hover">
+        <div class="fw-800 fs-4" style="color:#dc2626">🩸</div>
+        <div class="small text-muted mt-1">Find Donors</div>
+      </div>
+    </div>
+    <div class="col-4">
+      <div class="card py-3 card-hover">
+        <div class="fw-800 fs-4 text-purple">🔍</div>
+        <div class="small text-muted mt-1">Lost &amp; Found</div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- Feature cards -->
+<section class="container py-5">
+  <div class="text-center mb-5">
+    <h2 class="fw-800">Everything Students Need</h2>
+    <p class="text-muted mt-2">Three powerful modules built for the modern campus.</p>
+  </div>
+  <div class="row g-4">
+    <div class="col-md-4">
+      <div class="feature-card">
+        <div class="feature-icon mb-3"><i class="bi bi-journal-text"></i></div>
+        <h5 class="fw-800 mb-2">Notes Portal</h5>
+        <p class="text-muted mb-3 small">Upload and download PDFs, DOCX, PPTX and images. Search by title, subject, or description to find exactly what you need.</p>
+        {% if current_user %}
+          <a href="{{ url_for('notes') }}" class="btn btn-primary btn-sm">Open Notes <i class="bi bi-arrow-right"></i></a>
+        {% else %}
+          <a href="{{ url_for('register') }}" class="btn btn-primary btn-sm">Join to Access <i class="bi bi-arrow-right"></i></a>
+        {% endif %}
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="feature-card">
+        <div class="feature-icon mb-3" style="background:linear-gradient(135deg,#991b1b,#ef4444)">
+          <i class="bi bi-droplet-fill"></i>
+        </div>
+        <h5 class="fw-800 mb-2">Blood Donors</h5>
+        <p class="text-muted mb-3 small">Register as a donor, search by name, and filter by blood group. Help save lives right here on campus.</p>
+        {% if current_user %}
+          <a href="{{ url_for('donors') }}" class="btn btn-primary btn-sm">Find Donors <i class="bi bi-arrow-right"></i></a>
+        {% else %}
+          <a href="{{ url_for('register') }}" class="btn btn-primary btn-sm">Join to Access <i class="bi bi-arrow-right"></i></a>
+        {% endif %}
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="feature-card">
+        <div class="feature-icon mb-3" style="background:linear-gradient(135deg,#6d28d9,#a855f7)">
+          <i class="bi bi-search"></i>
+        </div>
+        <h5 class="fw-800 mb-2">Lost &amp; Found</h5>
+        <p class="text-muted mb-3 small">Post lost items or things you found. Help fellow students recover their belongings quickly and easily.</p>
+        {% if current_user %}
+          <a href="{{ url_for('lostfound') }}" class="btn btn-primary btn-sm">Browse Posts <i class="bi bi-arrow-right"></i></a>
+        {% else %}
+          <a href="{{ url_for('register') }}" class="btn btn-primary btn-sm">Join to Access <i class="bi bi-arrow-right"></i></a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA banner -->
+{% if not current_user %}
+<section class="container pb-5">
+  <div class="card p-5 text-center" style="background:var(--grad);color:#fff;border-radius:24px;">
+    <h3 class="fw-800 mb-2">Ready to join EduVerse?</h3>
+    <p class="mb-4" style="opacity:.9">Create a free account and start connecting with your campus community today.</p>
+    <div class="d-flex gap-3 justify-content-center flex-wrap">
+      <a href="{{ url_for('register') }}" class="btn btn-light btn-lg">Create Free Account</a>
+      <a href="{{ url_for('login') }}" class="btn btn-outline-light btn-lg">Sign In</a>
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

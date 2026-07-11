@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+{% block title %}Lost &amp; Found — EduVerse{% endblock %}
+{% block content %}
+<div class="container py-4">
+
+  <!-- Page header -->
+  <div class="d-flex justify-content-between align-items-start mb-4 flex-wrap gap-2">
+    <div>
+      <h2 class="page-title"><i class="bi bi-search text-royal"></i> Lost &amp; Found</h2>
+      <p class="page-sub">Post lost items or things you found on campus.</p>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- New post form -->
+    <div class="col-lg-4">
+      <div class="card p-4">
+        <h5 class="fw-800 mb-3 d-flex align-items-center gap-2">
+          <span style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#6d28d9,#a855f7);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.95rem">
+            <i class="bi bi-send"></i>
+          </span>
+          New Post
+        </h5>
+        <form method="post">
+          <div class="mb-3">
+            <label class="form-label">Type</label>
+            <select name="item_type" class="form-select">
+              <option value="lost">Lost — I lost something</option>
+              <option value="found">Found — I found something</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Title / Item <span class="text-danger">*</span></label>
+            <input name="title" class="form-control" placeholder="e.g. Blue water bottle" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Category</label>
+            <input name="category" class="form-control" placeholder="e.g. Electronics, ID Card, Books">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea name="description" class="form-control" rows="3"
+                      placeholder="Colour, size, distinguishing features…"></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Location</label>
+            <input name="location" class="form-control" placeholder="e.g. Library, Block B">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Contact</label>
+            <input name="contact" class="form-control" placeholder="Phone or email">
+          </div>
+          <div class="mb-4">
+            <label class="form-label">Status</label>
+            <select name="status" class="form-select">
+              <option value="open">Open</option>
+              <option value="resolved">Resolved</option>
+            </select>
+          </div>
+          <button class="btn btn-primary w-100">
+            <i class="bi bi-send"></i> Post
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Posts list -->
+    <div class="col-lg-8">
+      <div class="card p-4">
+        <!-- Filter bar -->
+        <form method="get">
+          <div class="row g-2 mb-3">
+            <div class="col-md-7">
+              <input name="q" value="{{ q }}" class="form-control"
+                     placeholder="Search item, category, location…">
+            </div>
+            <div class="col-md-3">
+              <select name="t" class="form-select">
+                <option value="">All types</option>
+                <option value="lost"  {% if t == 'lost'  %}selected{% endif %}>Lost</option>
+                <option value="found" {% if t == 'found' %}selected{% endif %}>Found</option>
+              </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+              <button class="btn btn-primary flex-fill">
+                <i class="bi bi-funnel"></i>
+              </button>
+              {% if q or t %}
+                <a href="{{ url_for('lostfound') }}" class="btn btn-outline-secondary" title="Clear filters">
+                  <i class="bi bi-x-lg"></i>
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        </form>
+
+        {% if q or t %}
+          <p class="text-muted small mb-3">
+            <i class="bi bi-funnel"></i>
+            Filtering by
+            {% if q %}<strong>"{{ q }}"</strong>{% endif %}
+            {% if q and t %} and {% endif %}
+            {% if t %}<strong>type: {{ t | capitalize }}</strong>{% endif %}
+            — {{ posts | length }} result{{ 's' if posts | length != 1 }}
+          </p>
+        {% endif %}
+
+        {% if posts %}
+        <div class="table-responsive">
+          <table class="table align-middle table-hover">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Category</th>
+                <th>Location</th>
+                <th>Contact</th>
+                <th>Status</th>
+                <th class="text-end">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for p in posts %}
+              <tr>
+                <td>
+                  <div class="fw-semibold mb-1">{{ p.title }}</div>
+                  <span class="lf-type-badge {{ p.item_type }}">
+                    <i class="bi bi-{% if p.item_type == 'found' %}check-circle{% else %}exclamation-triangle{% endif %}"></i>
+                    {{ p.item_type | upper }}
+                  </span>
+                  {% if p.description %}
+                    <div class="small text-muted mt-1">
+                      {{ p.description[:70] }}{% if p.description | length > 70 %}…{% endif %}
+                    </div>
+                  {% endif %}
+                </td>
+                <td class="text-muted small">{{ p.category or '—' }}</td>
+                <td class="text-muted small">{{ p.location or '—' }}</td>
+                <td class="text-muted small">{{ p.contact or '—' }}</td>
+                <td>
+                  {% if p.status == 'resolved' %}
+                    <span class="lf-status-badge resolved">
+                      <i class="bi bi-check-circle-fill"></i> Resolved
+                    </span>
+                  {% else %}
+                    <span class="lf-status-badge open">
+                      <i class="bi bi-circle-fill" style="font-size:.45rem"></i> Open
+                    </span>
+                  {% endif %}
+                </td>
+                <td class="text-end">
+                  <form method="post" action="{{ url_for('delete_lostfound', pid=p.id) }}" class="d-inline"
+                        onsubmit="return confirm('Delete this post?');">
+                    <button class="btn btn-sm btn-danger" title="Delete">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        {% elif q or t %}
+          <div class="empty-state">
+            <div class="empty-icon"><i class="bi bi-search"></i></div>
+            <h5>No posts found</h5>
+            <p>No posts match your current filters. Try different keywords or clear the filter.</p>
+            <a href="{{ url_for('lostfound') }}" class="btn btn-outline-secondary btn-sm mt-3">
+              <i class="bi bi-x-circle"></i> Clear Filters
+            </a>
+          </div>
+
+        {% else %}
+          <div class="empty-state">
+            <div class="empty-icon" style="background:linear-gradient(135deg,#ede9fe,#e0e7ff);color:#6d28d9">
+              <i class="bi bi-inbox"></i>
+            </div>
+            <h5>No posts yet</h5>
+            <p>Be the first to post a lost or found item to help your campus community.</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

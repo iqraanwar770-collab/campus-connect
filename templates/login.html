@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Login — EduVerse{% endblock %}
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-card">
+    <span class="auth-badge"><i class="bi bi-shield-lock"></i> Secure Login</span>
+    <h2 class="mb-1">Welcome back</h2>
+    <p class="text-muted mb-0">Sign in to continue to your dashboard.</p>
+
+    <form method="post" class="mt-4">
+      <div class="mb-3">
+        <label class="form-label">Email Address</label>
+        <input type="email" name="email" class="form-control" placeholder="you@example.com" required autocomplete="email">
+      </div>
+      <div class="mb-4">
+        <label class="form-label d-flex justify-content-between">
+          Password
+        </label>
+        <div class="pw-wrap">
+          <input type="password" name="password" class="form-control" placeholder="Your password" required autocomplete="current-password">
+          <button type="button" class="pw-toggle" tabindex="-1" aria-label="Show/hide password">
+            <i class="bi bi-eye"></i>
+          </button>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary w-100 py-2">
+        <i class="bi bi-box-arrow-in-right"></i> Sign In
+      </button>
+    </form>
+
+    <div class="auth-divider">or</div>
+
+    <p class="text-center text-muted mb-0" style="font-size:.9rem">
+      Don't have an account?
+      <a href="{{ url_for('register') }}" class="fw-600">Create one for free</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — EduVerse{% endblock %}
+{% block content %}
+<div class="container py-4">
+
+  <!-- Page header -->
+  <div class="d-flex justify-content-between align-items-start mb-4 flex-wrap gap-2">
+    <div>
+      <h2 class="page-title"><i class="bi bi-speedometer2 text-royal"></i> Dashboard</h2>
+      <p class="page-sub">Welcome back, <strong>{{ current_user }}</strong> — here's what's happening on campus.</p>
+    </div>
+  </div>
+
+  <!-- Stat cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-sm-4">
+      <div class="stat-card blue">
+        <div class="stat-icon"><i class="bi bi-journal-text"></i></div>
+        <div class="num">{{ stats.notes }}</div>
+        <div class="lbl">Total Notes</div>
+        <div class="trend"><i class="bi bi-files"></i> Shared resources</div>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="stat-card red">
+        <div class="stat-icon"><i class="bi bi-droplet-fill"></i></div>
+        <div class="num">{{ stats.donors }}</div>
+        <div class="lbl">Blood Donors</div>
+        <div class="trend"><i class="bi bi-heart-fill"></i> Registered donors</div>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="stat-card purple">
+        <div class="stat-icon"><i class="bi bi-search"></i></div>
+        <div class="num">{{ stats.lost_found }}</div>
+        <div class="lbl">Lost &amp; Found Posts</div>
+        <div class="trend"><i class="bi bi-pin-map"></i> Active posts</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="card p-4 mb-4">
+    <h5 class="fw-800 mb-3">Quick Actions</h5>
+    <div class="row g-3">
+      <div class="col-sm-4">
+        <a href="{{ url_for('notes') }}" class="qa-card">
+          <div class="qa-icon" style="background:#e0e7ff;color:#1e3a8a"><i class="bi bi-cloud-upload"></i></div>
+          <div>
+            <div class="qa-label">Upload Note</div>
+            <div class="qa-sub">Share a PDF, DOCX or image</div>
+          </div>
+        </a>
+      </div>
+      <div class="col-sm-4">
+        <a href="{{ url_for('donors') }}" class="qa-card">
+          <div class="qa-icon" style="background:#fee2e2;color:#991b1b"><i class="bi bi-droplet-half"></i></div>
+          <div>
+            <div class="qa-label">Register as Donor</div>
+            <div class="qa-sub">Add yourself to the donor list</div>
+          </div>
+        </a>
+      </div>
+      <div class="col-sm-4">
+        <a href="{{ url_for('lostfound') }}" class="qa-card">
+          <div class="qa-icon" style="background:#ede9fe;color:#6d28d9"><i class="bi bi-plus-circle"></i></div>
+          <div>
+            <div class="qa-label">New L&amp;F Post</div>
+            <div class="qa-sub">Report lost or found item</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Notes -->
+  {% if recent_notes %}
+  <div class="card p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5 class="fw-800 mb-0"><i class="bi bi-clock-history me-1 text-muted"></i> Recent Notes</h5>
+      <a href="{{ url_for('notes') }}" class="btn btn-outline-primary btn-sm">View All <i class="bi bi-arrow-right"></i></a>
+    </div>
+    <div class="table-responsive">
+      <table class="table mb-0">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Subject</th>
+            <th>Type</th>
+            <th>Uploaded</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for n in recent_notes %}
+          <tr>
+            <td class="fw-semibold">{{ n.title }}</td>
+            <td class="text-muted">{{ n.subject or '—' }}</td>
+            <td>
+              {% if n.file_type %}
+                <span class="file-chip {{ n.file_type }}">{{ n.file_type | upper }}</span>
+              {% else %}—{% endif %}
+            </td>
+            <td><span class="fmt-date text-muted small">{{ n.created_at }}</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% else %}
+  <div class="card">
+    <div class="empty-state">
+      <div class="empty-icon"><i class="bi bi-journal-text"></i></div>
+      <h5>No notes yet</h5>
+      <p>Upload the first note and it will appear here.</p>
+      <a href="{{ url_for('notes') }}" class="btn btn-primary btn-sm mt-3">
+        <i class="bi bi-cloud-upload"></i> Upload a Note
+      </a>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

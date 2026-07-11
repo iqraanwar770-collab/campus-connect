@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+{% block title %}Notes Portal — EduVerse{% endblock %}
+{% block content %}
+<div class="container py-4">
+
+  <!-- Page header -->
+  <div class="d-flex justify-content-between align-items-start mb-4 flex-wrap gap-2">
+    <div>
+      <h2 class="page-title"><i class="bi bi-journal-text text-royal"></i> Notes Portal</h2>
+      <p class="page-sub">Upload PDFs, DOCX, PPTX, and images to share with the whole campus.</p>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Upload form -->
+    <div class="col-lg-4">
+      <div class="card p-4">
+        <h5 class="fw-800 mb-3 d-flex align-items-center gap-2">
+          <span style="width:32px;height:32px;border-radius:8px;background:var(--grad);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.95rem">
+            <i class="bi bi-cloud-upload"></i>
+          </span>
+          Upload Note
+        </h5>
+        <form method="post" enctype="multipart/form-data">
+          <div class="mb-3">
+            <label class="form-label">Title <span class="text-danger">*</span></label>
+            <input name="title" class="form-control" placeholder="e.g. Chapter 5 Summary" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Subject</label>
+            <input name="subject" class="form-control" placeholder="e.g. Mathematics">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea name="description" class="form-control" rows="3" placeholder="Brief description (optional)"></textarea>
+          </div>
+          <div class="mb-4">
+            <label class="form-label">File</label>
+            <input type="file" name="file" class="form-control"
+                   accept=".pdf,.doc,.docx,.ppt,.pptx,.png,.jpg,.jpeg,.gif,.txt">
+            <div class="form-text mt-1" style="font-size:.78rem">PDF · DOC · PPT · Images · TXT &nbsp;|&nbsp; Max 25 MB</div>
+          </div>
+          <button class="btn btn-primary w-100">
+            <i class="bi bi-cloud-upload"></i> Upload Note
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Notes list -->
+    <div class="col-lg-8">
+      <div class="card p-4">
+        <!-- Search bar -->
+        <form method="get" class="mb-3">
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input name="q" value="{{ q }}" class="form-control"
+                   placeholder="Search by title, subject or description…">
+            <button class="btn btn-primary">Search</button>
+            {% if q %}
+              <a href="{{ url_for('notes') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-x-lg"></i> Clear
+              </a>
+            {% endif %}
+          </div>
+        </form>
+
+        {% if q %}
+          <p class="text-muted small mb-3">
+            {% if notes %}
+              <i class="bi bi-funnel"></i> {{ notes|length }} result{{ 's' if notes|length != 1 }} for "<strong>{{ q }}</strong>"
+            {% endif %}
+          </p>
+        {% endif %}
+
+        {% if notes %}
+        <div class="table-responsive">
+          <table class="table align-middle">
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Subject</th>
+                <th>Type</th>
+                <th>Uploaded</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for n in notes %}
+              <tr>
+                <td>
+                  <div class="fw-semibold">{{ n.title }}</div>
+                  {% if n.description %}
+                    <div class="small text-muted mt-1">
+                      {{ n.description[:90] }}{% if n.description|length > 90 %}…{% endif %}
+                    </div>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if n.subject %}
+                    <span class="badge" style="background:#f1f5f9;color:var(--ink-2);font-weight:600;border-radius:8px;font-size:.78rem">{{ n.subject }}</span>
+                  {% else %}
+                    <span class="text-muted">—</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if n.file_type %}
+                    <span class="file-chip {{ n.file_type }}">{{ n.file_type | upper }}</span>
+                  {% else %}
+                    <span class="text-muted small">No file</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <span class="fmt-date text-muted small">{{ n.created_at }}</span>
+                </td>
+                <td class="text-end">
+                  <div class="d-flex gap-1 justify-content-end">
+                    {% if n.filename %}
+                      <a href="{{ url_for('uploaded_file', filename=n.filename) }}"
+                         class="btn btn-sm btn-outline-primary" title="Download">
+                        <i class="bi bi-download"></i>
+                      </a>
+                    {% endif %}
+                    <form method="post" action="{{ url_for('delete_note', nid=n.id) }}" class="d-inline"
+                          onsubmit="return confirm('Delete this note permanently?');">
+                      <button class="btn btn-sm btn-danger" title="Delete">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        {% elif q %}
+          <!-- Empty search state -->
+          <div class="empty-state">
+            <div class="empty-icon"><i class="bi bi-search"></i></div>
+            <h5>No results found</h5>
+            <p>No notes match "<strong>{{ q }}</strong>". Try different keywords or clear the search.</p>
+            <a href="{{ url_for('notes') }}" class="btn btn-outline-primary btn-sm mt-3">
+              <i class="bi bi-x-circle"></i> Clear Search
+            </a>
+          </div>
+
+        {% else %}
+          <!-- Empty list state -->
+          <div class="empty-state">
+            <div class="empty-icon"><i class="bi bi-journal-text"></i></div>
+            <h5>No notes yet</h5>
+            <p>Be the first to upload a note and help your fellow students!</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

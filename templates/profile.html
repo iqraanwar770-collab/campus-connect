@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Profile — EduVerse{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <div class="card p-5 mx-auto" style="max-width:760px">
+
+    <!-- Profile header -->
+    <div class="d-flex align-items-center gap-4 mb-4 flex-wrap">
+      <div class="profile-avatar">
+        {{ user.name[0] | upper }}
+      </div>
+      <div>
+        <h2 class="fw-800 mb-0">{{ user.name }}</h2>
+        <p class="profile-meta mb-1">{{ user.email }}</p>
+        <div class="profile-since">
+          <i class="bi bi-calendar3"></i>
+          Member since <span class="fmt-date">{{ user.created_at }}</span>
+        </div>
+      </div>
+    </div>
+
+    <hr style="border-color:var(--border);margin:1.5rem 0">
+
+    <!-- Stats -->
+    <h6 class="fw-700 text-muted mb-3" style="font-size:.8rem;letter-spacing:.08em;text-transform:uppercase">
+      My Activity
+    </h6>
+    <div class="row g-3 mb-4">
+      <div class="col-sm-6">
+        <div class="stat-card blue">
+          <div class="stat-icon"><i class="bi bi-journal-text"></i></div>
+          <div class="num">{{ counts.notes }}</div>
+          <div class="lbl">Notes Uploaded</div>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="stat-card purple">
+          <div class="stat-icon"><i class="bi bi-search"></i></div>
+          <div class="num">{{ counts.lost_found }}</div>
+          <div class="lbl">Lost &amp; Found Posts</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="d-flex gap-2 flex-wrap">
+      <a href="{{ url_for('dashboard') }}" class="btn btn-primary">
+        <i class="bi bi-speedometer2"></i> Dashboard
+      </a>
+      <a href="{{ url_for('notes') }}" class="btn btn-outline-primary">
+        <i class="bi bi-journal-text"></i> My Notes
+      </a>
+      <a href="{{ url_for('lostfound') }}" class="btn btn-outline-primary">
+        <i class="bi bi-search"></i> Lost &amp; Found
+      </a>
+      <a href="{{ url_for('logout') }}" class="btn btn-outline-secondary ms-auto">
+        <i class="bi bi-box-arrow-right"></i> Logout
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}
